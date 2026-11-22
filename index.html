@@ -1,529 +1,125 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BETHACK | Sports Intelligence</title>
-
-    <link rel="stylesheet" href="style.css">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090d14">
+  <title>BETHACK | Sports Intelligence</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js" defer></script>
 </head>
-
 <body>
-
-<div class="app-container">
-
-    <!-- SIDEBAR -->
+  <div class="app-shell">
     <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" data-page="dashboard">
+        <span class="brand-mark">B</span>
+        <span>BETHACK<small>SPORTS INTELLIGENCE</small></span>
+      </a>
 
-        <div class="brand">
-            <div class="brand-icon">B</div>
-            <div class="brand-text">
-                <h1>BETHACK</h1>
-                <span>SPORTS INTELLIGENCE</span>
-            </div>
+      <div class="side-label">WORKSPACE</div>
+      <nav class="navigation">
+        <button class="nav-link active" data-page="dashboard">▦ <span>Dashboard</span></button>
+        <button class="nav-link" data-page="matches">◷ <span>Partidos</span></button>
+        <button class="nav-link" data-page="scanner">⌕ <span>Odds Scanner</span></button>
+        <button class="nav-link" data-page="value">◆ <span>Value Finder</span></button>
+        <button class="nav-link" data-page="analysis">◎ <span>Match Analysis</span></button>
+        <button class="nav-link" data-page="performance">↗ <span>Performance</span></button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="connection-card">
+          <span class="status-dot" id="connectionDot"></span>
+          <div><strong id="connectionText">Conectando...</strong><small>Supabase Database</small></div>
         </div>
-
-        <div class="nav-label">WORKSPACE</div>
-
-        <nav class="navigation">
-
-            <a href="#" class="nav-item active" data-page="dashboard">
-                <span>◫</span> Dashboard
-            </a>
-
-            <a href="#" class="nav-item" data-page="matches">
-                <span>⚽</span> Matches
-            </a>
-
-            <a href="#" class="nav-item" data-page="live">
-                <span>◉</span> Live Center
-            </a>
-
-            <a href="#" class="nav-item" data-page="scanner">
-                <span>⌕</span> Odds Scanner
-            </a>
-
-            <a href="#" class="nav-item" data-page="value">
-                <span>↗</span> Value Finder
-            </a>
-
-            <a href="#" class="nav-item" data-page="analysis">
-                <span>▤</span> Match Analysis
-            </a>
-
-            <a href="#" class="nav-item" data-page="performance">
-                <span>◷</span> Performance
-            </a>
-
-        </nav>
-
-        <div class="nav-label">SYSTEM</div>
-
-        <nav class="navigation">
-
-            <a href="#" class="nav-item" data-page="settings">
-                <span>⚙</span> Settings
-            </a>
-
-        </nav>
-
-        <div class="sidebar-bottom">
-
-            <div class="system-status">
-                <span class="status-dot"></span>
-                <div>
-                    <strong>DATA ENGINE</strong>
-                    <small>Demo environment</small>
-                </div>
-            </div>
-
-            <div class="sidebar-footer">
-                BETHACK V1.0
-                <span>HACK THE ODDS.</span>
-            </div>
-
-        </div>
-
+        <button class="nav-link" id="refreshButton">↻ <span>Actualizar datos</span></button>
+      </div>
     </aside>
 
-
-    <!-- MAIN CONTENT -->
     <main class="main-content">
-
-        <!-- TOPBAR -->
-        <header class="topbar">
-
-            <div class="topbar-left">
-                <button class="menu-toggle" id="menuToggle">☰</button>
-
-                <div class="breadcrumb">
-                    <span>Workspace</span>
-                    <span>/</span>
-                    <strong id="currentPage">Dashboard</strong>
-                </div>
-            </div>
-
-            <div class="topbar-right">
-
-                <div class="data-status">
-                    <span class="status-dot"></span>
-                    DEMO DATA
-                </div>
-
-                <button class="icon-button" id="refreshButton" title="Refresh data">
-                    ↻
-                </button>
-
-                <div class="profile">
-                    <div class="profile-avatar">BH</div>
-                </div>
-
-            </div>
-
-        </header>
-
-
-        <!-- DASHBOARD PAGE -->
-        <section class="page active" id="dashboard">
-
-            <div class="page-heading">
-
-                <div>
-                    <span class="eyebrow">SPORTS INTELLIGENCE PLATFORM</span>
-                    <h2>Dashboard</h2>
-                    <p>Sports data, probabilities and market intelligence.</p>
-                </div>
-
-                <div class="heading-date" id="currentDate"></div>
-
-            </div>
-
-
-            <!-- KPI CARDS -->
-            <div class="stats-grid">
-
-                <div class="stat-card">
-
-                    <div class="stat-top">
-                        <span>Matches Available</span>
-                        <span class="stat-icon">◫</span>
-                    </div>
-
-                    <h3 id="totalMatches">--</h3>
-                    <p>Events in current dataset</p>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <div class="stat-top">
-                        <span>Value Opportunities</span>
-                        <span class="stat-icon green">↗</span>
-                    </div>
-
-                    <h3 id="valueOpportunities">--</h3>
-                    <p>Model-detected opportunities</p>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <div class="stat-top">
-                        <span>Average Model Probability</span>
-                        <span class="stat-icon">◈</span>
-                    </div>
-
-                    <h3 id="averageProbability">--</h3>
-                    <p>Across analyzed events</p>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <div class="stat-top">
-                        <span>Tracked Sports</span>
-                        <span class="stat-icon">◎</span>
-                    </div>
-
-                    <h3 id="sportsTracked">--</h3>
-                    <p>Sports currently monitored</p>
-
-                </div>
-
-            </div>
-
-
-            <!-- SPORTS FILTER -->
-            <section class="content-section">
-
-                <div class="section-heading">
-
-                    <div>
-                        <h3>Sports Market</h3>
-                        <p>Explore events and market data</p>
-                    </div>
-
-                    <div class="live-indicator">
-                        <span class="status-dot"></span>
-                        DEMO
-                    </div>
-
-                </div>
-
-
-                <div class="sports-filter" id="sportsFilter">
-
-                    <button class="sport-tab active" data-sport="all">
-                        All Sports
-                    </button>
-
-                    <button class="sport-tab" data-sport="football">
-                        ⚽ Football
-                    </button>
-
-                    <button class="sport-tab" data-sport="basketball">
-                        🏀 Basketball
-                    </button>
-
-                    <button class="sport-tab" data-sport="baseball">
-                        ⚾ Baseball
-                    </button>
-
-                    <button class="sport-tab" data-sport="hockey">
-                        🏒 Hockey
-                    </button>
-
-                </div>
-
-
-                <!-- MATCH SEARCH -->
-                <div class="match-toolbar">
-
-                    <div class="search-box">
-                        <span>⌕</span>
-
-                        <input
-                            type="text"
-                            id="matchSearch"
-                            placeholder="Search teams, leagues or matches..."
-                        >
-                    </div>
-
-                    <select id="leagueFilter">
-                        <option value="all">All leagues</option>
-                    </select>
-
-                </div>
-
-
-                <!-- MATCH LIST -->
-                <div class="matches-grid" id="matchesContainer">
-
-                    <!-- Matches rendered by JavaScript -->
-
-                </div>
-
-
-                <div class="empty-state" id="emptyState" hidden>
-                    <h3>No matches found</h3>
-                    <p>Try another search or filter.</p>
-                </div>
-
-            </section>
-
-
-            <!-- ANALYTICS -->
-            <div class="dashboard-bottom">
-
-
-                <!-- MODEL ENGINE -->
-                <section class="panel">
-
-                    <div class="panel-heading">
-
-                        <div>
-                            <span class="eyebrow">CORE SYSTEM</span>
-                            <h3>Probability Engine</h3>
-                        </div>
-
-                        <span class="engine-badge">V1.0</span>
-
-                    </div>
-
-
-                    <div class="engine-content">
-
-                        <div class="engine-visual">
-                            <div class="engine-circle">
-                                <span>BH</span>
-                            </div>
-                        </div>
-
-                        <div class="engine-info">
-
-                            <h4>Analytical Engine</h4>
-
-                            <p>
-                                Statistical processing, probability estimation
-                                and market evaluation.
-                            </p>
-
-                            <div class="engine-features">
-
-                                <div>
-                                    <span class="feature-dot"></span>
-                                    Statistical Analysis
-                                </div>
-
-                                <div>
-                                    <span class="feature-dot"></span>
-                                    Probability Modeling
-                                </div>
-
-                                <div>
-                                    <span class="feature-dot"></span>
-                                    Expected Value Calculation
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-                <!-- MARKET INTELLIGENCE -->
-                <section class="panel">
-
-                    <div class="panel-heading">
-
-                        <div>
-                            <span class="eyebrow">MARKET ANALYTICS</span>
-                            <h3>Market Intelligence</h3>
-                        </div>
-
-                        <span class="panel-icon">↗</span>
-
-                    </div>
-
-
-                    <div class="market-placeholder">
-
-                        <div class="market-icon">⌁</div>
-
-                        <h4>Market Analysis</h4>
-
-                        <p>
-                            Odds movement, implied probability,
-                            fair odds and market discrepancies.
-                        </p>
-
-                        <div class="market-tags">
-                            <span>ODDS</span>
-                            <span>EV</span>
-                            <span>MARKET</span>
-                        </div>
-
-                    </div>
-
-                </section>
-
-            </div>
-
-
-            <!-- DATA SOURCE -->
-            <section class="data-source-panel">
-
-                <div class="source-left">
-
-                    <div class="source-icon">⌘</div>
-
-                    <div>
-                        <h4>Data Infrastructure</h4>
-                        <p>External sports APIs will be connected to this platform.</p>
-                    </div>
-
-                </div>
-
-                <div class="source-right">
-
-                    <span class="source-tag">API READY</span>
-
-                </div>
-
-            </section>
-
-        </section>
-
-
-        <!-- OTHER MODULES -->
-        <section class="page" id="matches">
-            <div class="page-heading">
-                <div>
-                    <span class="eyebrow">SPORTS DATABASE</span>
-                    <h2>Matches</h2>
-                    <p>Sports events and match database.</p>
-                </div>
-            </div>
-            <div id="matchesPageContainer"></div>
-        </section>
-
-
-        <section class="page" id="live">
-            <div class="page-heading">
-                <div>
-                    <span class="eyebrow">REAL TIME MONITORING</span>
-                    <h2>Live Center</h2>
-                    <p>Live scores, game status and event monitoring.</p>
-                </div>
-            </div>
-            <div class="module-placeholder">
-                <h3>Live Data Module</h3>
-                <p>Awaiting live data integration.</p>
-            </div>
-        </section>
-
-
-        <section class="page" id="scanner">
-            <div class="page-heading">
-                <div>
-                    <span class="eyebrow">MARKET COMPARISON</span>
-                    <h2>Odds Scanner</h2>
-                    <p>Compare prices and identify market discrepancies.</p>
-                </div>
-            </div>
-            <div class="module-placeholder">
-                <h3>Odds Scanner</h3>
-                <p>Awaiting odds provider integration.</p>
-            </div>
-        </section>
-
-
-        <section class="page" id="value">
-            <div class="page-heading">
-                <div>
-                    <span class="eyebrow">QUANTITATIVE ANALYSIS</span>
-                    <h2>Value Finder</h2>
-                    <p>Compare model probabilities against market prices.</p>
-                </div>
-            </div>
-            <div class="module-placeholder">
-                <h3>Value Engine</h3>
-                <p>Probability and EV calculations will be integrated here.</p>
-            </div>
-        </section>
-
-
-        <section class="page" id="analysis">
-            <div class="page-heading">
-                <div>
-                    <span class="eyebrow">MATCH INTELLIGENCE</span>
-                    <h2>Match Analysis</h2>
-                    <p>Detailed statistical analysis of individual events.</p>
-                </div>
-            </div>
-            <div class="module-placeholder">
-                <h3>Analysis Center</h3>
-                <p>Match analysis module.</p>
-            </div>
-        </section>
-
-
-        <section class="page" id="performance">
-            <div class="page-heading">
-                <div>
-                    <span class="eyebrow">MODEL TRACKING</span>
-                    <h2>Performance</h2>
-                    <p>Track accuracy, calibration and historical performance.</p>
-                </div>
-            </div>
-            <div class="module-placeholder">
-                <h3>Performance Tracking</h3>
-                <p>Historical model metrics will be displayed here.</p>
-            </div>
-        </section>
-
-
-        <section class="page" id="settings">
-            <div class="page-heading">
-                <div>
-                    <span class="eyebrow">CONFIGURATION</span>
-                    <h2>Settings</h2>
-                    <p>Platform configuration and data preferences.</p>
-                </div>
-            </div>
-            <div class="module-placeholder">
-                <h3>Supabase Connection</h3>
-                <p>Paste your Supabase publishable (anon) key to load live matches and odds from Supabase. It stays in this browser only and is never sent to GitHub.</p>
-                <input id="supabaseKeyInput" type="password" placeholder="sb_publishable_..." style="width:100%;padding:10px;margin:8px 0;box-sizing:border-box;" />
-                <button id="saveSupabaseKeyBtn" type="button" style="padding:10px 16px;cursor:pointer;">Save and load live data</button>
-                <p id="supabaseKeyStatus"></p>
-                <p>Supabase project: https://qlmifrawzbwwaguxwrbw.supabase.co</p>
-            </div>
-            <div class="module-placeholder">
-                <h3>Platform Settings</h3>
-                <p>Configuration module.</p>
-            </div>
-        </section>
-
-
+      <header class="topbar">
+        <button class="mobile-menu" id="menuButton">☰</button>
+        <div>
+          <div class="eyebrow">ANÁLISIS · PROBABILIDADES · VALOR</div>
+          <h1 id="pageTitle">Dashboard</h1>
+        </div>
+        <div class="top-actions">
+          <span class="live-label"><i></i> DATABASE LIVE</span>
+          <span class="date-label" id="lastUpdated">Esperando datos</span>
+        </div>
+      </header>
+
+      <section class="page active" id="dashboard">
+        <div class="welcome-row">
+          <div>
+            <h2>Sports Intelligence Center</h2>
+            <p>Mercados, cuotas y oportunidades desde tu base de datos.</p>
+          </div>
+          <button class="primary-button" id="dashboardRefresh">↻ Actualizar</button>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card"><span>PARTIDOS</span><strong id="statEvents">—</strong><small>Eventos registrados</small></article>
+          <article class="stat-card"><span>CUOTAS</span><strong id="statOdds">—</strong><small>Precios disponibles</small></article>
+          <article class="stat-card"><span>CASAS</span><strong id="statBooks">—</strong><small>Bookmakers registrados</small></article>
+          <article class="stat-card"><span>VALUE PICKS</span><strong id="statValue">—</strong><small>Oportunidades calculadas</small></article>
+        </div>
+
+        <div class="content-grid">
+          <article class="panel wide-panel">
+            <div class="panel-heading"><div><h3>Próximos partidos</h3><p>Eventos almacenados en Supabase</p></div><button class="text-button" data-goto="matches">Ver todos →</button></div>
+            <div id="dashboardMatches" class="table-wrap"><div class="loading">Cargando partidos...</div></div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Estado del sistema</h3><p>Conexión y datos</p></div></div>
+            <div id="systemStatus" class="status-list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page" id="matches">
+        <div class="section-heading"><div><h2>Partidos</h2><p>Calendario de eventos disponibles</p></div></div>
+        <div class="toolbar">
+          <input id="matchSearch" placeholder="Buscar equipo o liga...">
+          <select id="matchStatus"><option value="all">Todos los estados</option><option value="scheduled">Programados</option><option value="live">En vivo</option></select>
+        </div>
+        <div class="panel"><div id="matchesTable" class="table-wrap"><div class="loading">Cargando...</div></div></div>
+      </section>
+
+      <section class="page" id="scanner">
+        <div class="section-heading"><div><h2>Odds Scanner</h2><p>Comparación de cuotas por mercado y casa</p></div></div>
+        <div class="toolbar">
+          <input id="oddsSearch" placeholder="Buscar equipo, selección o casa...">
+          <select id="marketFilter"><option value="all">Todos los mercados</option><option value="h2h">Moneyline / 1X2</option><option value="totals">Totales</option><option value="spreads">Handicap</option></select>
+        </div>
+        <div class="panel"><div id="oddsTable" class="table-wrap"><div class="loading">Cargando cuotas...</div></div></div>
+      </section>
+
+      <section class="page" id="value">
+        <div class="section-heading"><div><h2>Value Finder</h2><p>EV positivo y negativo calculado por el modelo</p></div></div>
+        <div class="notice">Los picks solo aparecen cuando existen predicciones y cuotas compatibles. No se generan oportunidades ficticias.</div>
+        <div class="panel"><div id="valueTable" class="table-wrap"><div class="loading">Cargando...</div></div></div>
+      </section>
+
+      <section class="page" id="analysis">
+        <div class="section-heading"><div><h2>Match Analysis</h2><p>Consulta los mercados y precios de cada evento</p></div></div>
+        <div class="toolbar"><input id="analysisSearch" placeholder="Buscar partido..."></div>
+        <div id="analysisCards" class="analysis-grid"></div>
+      </section>
+
+      <section class="page" id="performance">
+        <div class="section-heading"><div><h2>Performance</h2><p>Registro disponible de oportunidades y resultados</p></div></div>
+        <div class="stats-grid">
+          <article class="stat-card"><span>PICKS REGISTRADOS</span><strong id="perfPicks">—</strong></article>
+          <article class="stat-card"><span>EV POSITIVO</span><strong id="perfPositive">—</strong></article>
+          <article class="stat-card"><span>EV NEGATIVO</span><strong id="perfNegative">—</strong></article>
+          <article class="stat-card"><span>MODELO</span><strong>V1.0</strong></article>
+        </div>
+        <div class="panel"><div id="performanceTable" class="table-wrap"></div></div>
+      </section>
+
+      <footer class="footer">BETHACK <span>ANÁLISIS · PROBABILIDADES · VALOR</span><span id="footerUpdated">—</span></footer>
     </main>
-
-</div>
-
-
-<script src="script.js"></script>
-
+  </div>
 </body>
 </html>
