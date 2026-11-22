@@ -133,3 +133,75 @@ tbody tr:hover{background:#172231}
 #sport-content {
   margin-top: 24px;
 }
+
+.sports-section {
+  margin: 22px 0 16px;
+}
+
+.sports-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.sport-card {
+  min-height: 95px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 25px;
+  transition: .2s;
+}
+
+.sport-card span {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sport-card:hover,
+.sport-card.active {
+  border-color: var(--green);
+  background: #172d2a;
+  color: var(--green);
+}
+
+.league-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 18px;
+}
+
+.league-button {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.league-button:hover,
+.league-button.active {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+@media(max-width:900px) {
+  .sports-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media(max-width:450px) {
+  .sports-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
