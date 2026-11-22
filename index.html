@@ -77,27 +77,32 @@
         </div>
       </section>
 
-      
 <section class="page" id="matches">
   <div class="section-heading">
     <div>
       <h2>Partidos</h2>
-      <p>Selecciona un deporte y después una liga.</p>
+      <p>Sports Intelligence Center · Selecciona tu deporte y liga</p>
     </div>
   </div>
 
-  <div class="sports-section">
+  <div class="sports-top-bar">
     <div class="sports-grid" id="sportsGrid">
-      <button class="sport-card active" data-sport="all">🌐<span>Todos</span></button>
-      <button class="sport-card" data-sport="soccer">⚽<span>Fútbol</span></button>
-      <button class="sport-card" data-sport="basketball">🏀<span>Basketball</span></button>
-      <button class="sport-card" data-sport="hockey">🏒<span>Hockey</span></button>
-      <button class="sport-card" data-sport="americanfootball">🏈<span>NFL</span></button>
-      <button class="sport-card" data-sport="baseball">⚾<span>MLB</span></button>
+      <button class="sport-card active" data-sport="all">🌐 Todos</button>
+      <button class="sport-card" data-sport="soccer">⚽ Fútbol</button>
+      <button class="sport-card" data-sport="basketball">🏀 Basketball</button>
+      <button class="sport-card" data-sport="hockey">🏒 NHL</button>
+      <button class="sport-card" data-sport="americanfootball">🏈 NFL</button>
+      <button class="sport-card" data-sport="baseball">⚾ MLB</button>
     </div>
   </div>
 
-  <div id="leagueFilters" class="league-filters"></div>
+  <div class="league-panel">
+    <div class="league-heading">
+      <h3>Ligas disponibles</h3>
+      <span>Selecciona una competición</span>
+    </div>
+    <div id="leagueFilters" class="league-filters"></div>
+  </div>
 
   <div class="toolbar">
     <input id="matchSearch" placeholder="Buscar equipo o liga...">
@@ -110,78 +115,9 @@
 
   <div class="panel">
     <div id="matchesTable" class="table-wrap">
-      <div class="loading">Cargando...</div>
+      <div class="loading">Cargando partidos...</div>
     </div>
   </div>
 </section>
 
-
-      <section class="page" id="scanner">
-        <div class="section-heading"><div><h2>Odds Scanner</h2><p>Comparación de cuotas por mercado y casa</p></div></div>
-        <div class="toolbar">
-          <input id="oddsSearch" placeholder="Buscar equipo, selección o casa...">
-          <select id="marketFilter"><option value="all">Todos los mercados</option><option value="h2h">Moneyline / 1X2</option><option value="totals">Totales</option><option value="spreads">Handicap</option></select>
-        </div>
-        <div class="panel"><div id="oddsTable" class="table-wrap"><div class="loading">Cargando cuotas...</div></div></div>
-      </section>
-
-      <section class="page" id="value">
-        <div class="section-heading"><div><h2>Value Finder</h2><p>EV positivo y negativo calculado por el modelo</p></div></div>
-        <div class="notice">Los picks solo aparecen cuando existen predicciones y cuotas compatibles. No se generan oportunidades ficticias.</div>
-        <div class="panel"><div id="valueTable" class="table-wrap"><div class="loading">Cargando...</div></div></div>
-      </section>
-
-      <section class="page" id="analysis">
-        <div class="section-heading"><div><h2>Match Analysis</h2><p>Consulta los mercados y precios de cada evento</p></div></div>
-        <div class="toolbar"><input id="analysisSearch" placeholder="Buscar partido..."></div>
-        <div id="analysisCards" class="analysis-grid"></div>
-      </section>
-
-      <section class="page" id="performance">
-        <div class="section-heading"><div><h2>Performance</h2><p>Registro disponible de oportunidades y resultados</p></div></div>
-        <div class="stats-grid">
-          <article class="stat-card"><span>PICKS REGISTRADOS</span><strong id="perfPicks">—</strong></article>
-          <article class="stat-card"><span>EV POSITIVO</span><strong id="perfPositive">—</strong></article>
-          <article class="stat-card"><span>EV NEGATIVO</span><strong id="perfNegative">—</strong></article>
-          <article class="stat-card"><span>MODELO</span><strong>V1.0</strong></article>
-        </div>
-        <div class="panel"><div id="performanceTable" class="table-wrap"></div></div>
-      </section>
-
-      <footer class="footer">BETHACK <span>ANÁLISIS · PROBABILIDADES · VALOR</span><span id="footerUpdated">—</span></footer>
-    </main>
-  </div>
-</body>
-</html>
-
-<section class="sports-section">
-  <h2>Deportes</h2>
-
-  <div class="sports-grid">
-    <button class="sport-card" data-sport="soccer">
-      ⚽ <span>Fútbol</span>
-    </button>
-
-    <button class="sport-card" data-sport="basketball">
-      🏀 <span>Basketball</span>
-    </button>
-
-    <button class="sport-card" data-sport="hockey">
-      🏒 <span>Hockey</span>
-    </button>
-
-    <button class="sport-card" data-sport="americanfootball">
-      🏈 <span>NFL</span>
-    </button>
-
-    <button class="sport-card" data-sport="baseball">
-      ⚾ <span>MLB</span>
-    </button>
-  </div>
-</section>
-
-<section id="sport-content">
-  <h2>Selecciona un deporte</h2>
-  <div id="league-list"></div>
-  <div id="matches-list"></div>
-</section>
+      
