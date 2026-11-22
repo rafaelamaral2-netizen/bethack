@@ -1,76 +1,101 @@
--- BETHACK - Sync automatico diario en Supabase
--- Corre esto en Supabase > SQL Editor, en la compu.
--- No compartas este archivo con nadie, tiene un lugar para tu secreto.
---
--- PASO 1: Activa las extensiones (solo la primera vez)
-create extension if not exists pg_cron;
-create extension if not exists pg_net;
-
--- PASO 2: Guarda el secreto en Vault (solo la primera vez)
--- Reemplaza TU_SECRETO_AQUI por tu BETHACK_SYNC_SECRET,
--- el mismo que usaste en el Test y que si funciono.
--- No pongas la llave de Odds aqui, ni la llave anon.
-select vault.create_secret('https://qlmifrawzbwwaguxwrbw.supabase.co', 'bethack_project_url');
-select vault.create_secret('TU_SECRETO_AQUI', 'bethack_sync_secret');
-
--- PASO 3: Trabajos diarios, 8:00 AM hora de Puerto Rico = 12:00 UTC
--- Cada liga gasta 3 creditos. 4 ligas = 12 creditos al dia.
-
--- NBA, todos los dias 8:00 AM AST
-select cron.schedule(
-  'bethack-sync-nba-daily',
-  '0 12 * * *',
-  $$
-  select net.http_post(
-    url := (select decrypted_secret from vault.decrypted_secrets where name = 'bethack_project_url') || '/functions/v1/sync-odds',
-    headers := jsonb_build_object('Content-Type', 'application/json', 'x-bethack-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'bethack_sync_secret')),
-    body := '{"sportKey": "basketball_nba", "leagueSlug": "nba"}'::jsonb
-  );
-  $$
-);
-
--- Premier League, todos los dias 8:05 AM AST
-select cron.schedule(
-  'bethack-sync-epl-daily',
-  '5 12 * * *',
-  $$
-  select net.http_post(
-    url := (select decrypted_secret from vault.decrypted_secrets where name = 'bethack_project_url') || '/functions/v1/sync-odds',
-    headers := jsonb_build_object('Content-Type', 'application/json', 'x-bethack-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'bethack_sync_secret')),
-    body := '{"sportKey": "soccer_epl", "leagueSlug": "premier-league"}'::jsonb
-  );
-  $$
-);
-
--- La Liga, todos los dias 8:10 AM AST
-select cron.schedule(
-  'bethack-sync-laliga-daily',
-  '10 12 * * *',
-  $$
-  select net.http_post(
-    url := (select decrypted_secret from vault.decrypted_secrets where name = 'bethack_project_url') || '/functions/v1/sync-odds',
-    headers := jsonb_build_object('Content-Type', 'application/json', 'x-bethack-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'bethack_sync_secret')),
-    body := '{"sportKey": "soccer_spain_la_liga", "leagueSlug": "la-liga"}'::jsonb
-  );
-  $$
-);
-
--- Liga MX, todos los dias 8:15 AM AST
-select cron.schedule(
-  'bethack-sync-ligamx-daily',
-  '15 12 * * *',
-  $$
-  select net.http_post(
-    url := (select decrypted_secret from vault.decrypted_secrets where name = 'bethack_project_url') || '/functions/v1/sync-odds',
-    headers := jsonb_build_object('Content-Type', 'application/json', 'x-bethack-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'bethack_sync_secret')),
-    body := '{"sportKey": "soccer_mexico_ligamx", "leagueSlug": "liga-mx"}'::jsonb
-  );
-  $$
-);
-
--- Para ver que trabajos quedaron:
--- select jobname, schedule from cron.job;
--- Para ver si corrieron bien:
--- select * from cron.job_run_details order by start_time desc limit 10;
--- Para borrar uno:
--- select cron.unschedule('bethack-sync-nba-daily');
+:root {
+  --bg:#090d14;
+  --surface:#111824;
+  --surface2:#151f2d;
+  --border:#253143;
+  --text:#edf3fa;
+  --muted:#8492a6;
+  --green:#20e59a;
+  --green2:#0ebd7c;
+  --red:#ff6474;
+  --blue:#61a9ff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app-shell{display:flex;min-height:100vh}
+.sidebar{width:245px;position:fixed;inset:0 auto 0 0;background:#0d131d;border-right:1px solid var(--border);padding:25px 16px;display:flex;flex-direction:column;z-index:10}
+.brand{display:flex;align-items:center;gap:12px;color:white;text-decoration:none;font-weight:900;font-size:19px;letter-spacing:1px;padding:4px 8px 35px}
+.brand small{display:block;font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:5px}
+.brand-mark{width:39px;height:39px;border-radius:11px;background:var(--green);color:#06130e;display:grid;place-items:center;font-size:25px;font-weight:1000}
+.side-label,.eyebrow{font-size:10px;letter-spacing:2px;color:var(--muted);font-weight:800}
+.side-label{padding:0 12px 13px}
+.navigation{display:grid;gap:6px}
+.nav-link{border:0;background:transparent;color:#a8b4c4;text-align:left;padding:13px 12px;border-radius:9px;display:flex;align-items:center;gap:13px;font-size:14px}
+.nav-link:hover,.nav-link.active{background:#172638;color:var(--green)}
+.nav-link.active{box-shadow:inset 3px 0 var(--green)}
+.sidebar-bottom{margin-top:auto}
+.connection-card{display:flex;align-items:center;gap:11px;padding:14px 10px;margin-bottom:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px}
+.connection-card strong,.connection-card small{display:block;font-size:12px}
+.connection-card small{color:var(--muted);margin-top:4px}
+.status-dot,.live-label i{width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block;box-shadow:0 0 10px #20e59a88}
+.main-content{margin-left:245px;width:calc(100% - 245px);padding:30px 36px;max-width:1800px}
+.topbar{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:22px;margin-bottom:28px}
+h1{font-size:25px;margin:7px 0 0}
+.top-actions{display:flex;align-items:center;gap:20px}
+.live-label{font-size:10px;color:var(--green);font-weight:800;letter-spacing:1px}
+.live-label i{margin-right:7px}
+.date-label{font-size:11px;color:var(--muted)}
+.mobile-menu{display:none}
+.page{display:none}.page.active{display:block}
+.welcome-row,.section-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:23px}
+h2{font-size:20px;margin:0 0 7px}
+p{color:var(--muted);font-size:13px;margin:0}
+.primary-button{border:0;background:var(--green);color:#06140e;font-weight:800;padding:11px 16px;border-radius:8px}
+.primary-button:hover{background:#63f5bd}
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:20px}
+.stat-card,.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px}
+.stat-card{padding:19px}
+.stat-card span{font-size:10px;letter-spacing:1.4px;color:var(--muted);font-weight:800}
+.stat-card strong{display:block;font-size:30px;margin:13px 0 7px}
+.stat-card small{color:var(--muted);font-size:11px}
+.content-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(250px,1fr);gap:17px}
+.panel{padding:20px;margin-bottom:17px;min-width:0}
+.panel-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.panel-heading h3{font-size:15px;margin:0 0 5px}
+.panel-heading p{font-size:11px}
+.text-button{background:none;border:0;color:var(--green);font-size:12px}
+.toolbar{display:flex;gap:10px;margin-bottom:16px}
+input,select{background:#0c131e;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:12px;outline:none}
+input:focus,select:focus{border-color:var(--green)}
+.toolbar input{flex:1;min-width:0}
+.toolbar select{min-width:180px}
+.table-wrap{width:100%;overflow-x:auto}
+table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:12px}
+th{text-align:left;color:var(--muted);font-size:10px;letter-spacing:1px;font-weight:800;padding:12px;border-bottom:1px solid var(--border)}
+td{padding:14px 12px;border-bottom:1px solid #202b39}
+tbody tr:hover{background:#172231}
+.team-cell{font-weight:700}
+.sub-cell{display:block;font-size:10px;color:var(--muted);margin-top:5px}
+.odds-value{color:var(--green);font-weight:900;font-size:14px}
+.positive{color:var(--green)}.negative{color:var(--red)}
+.tag{padding:5px 8px;border-radius:5px;background:#1b2b3b;color:#9eb4c8;font-size:10px}
+.status-list{display:grid;gap:14px}
+.status-item{display:flex;justify-content:space-between;font-size:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.status-item span:last-child{color:var(--green)}
+.notice{padding:14px 16px;background:#18291f;border:1px solid #28533d;color:#a5e8c5;border-radius:9px;font-size:12px;margin-bottom:17px}
+.analysis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.analysis-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+.analysis-card h3{font-size:15px;margin:0 0 10px}
+.analysis-card p{margin:5px 0}
+.loading,.empty,.error{padding:30px;text-align:center;color:var(--muted);font-size:13px}
+.error{color:var(--red)}
+.footer{display:flex;justify-content:space-between;border-top:1px solid var(--border);padding:20px 0;margin-top:35px;color:var(--muted);font-size:10px;letter-spacing:1px}
+.footer span:nth-child(2){color:var(--green)}
+@media(max-width:1050px){.stats-grid{grid-template-columns:repeat(2,1fr)}.content-grid{grid-template-columns:1fr}}
+@media(max-width:700px){
+ .sidebar{transform:translateX(-100%);transition:.25s;width:260px}
+ .sidebar.open{transform:translateX(0)}
+ .main-content{margin-left:0;width:100%;padding:20px 14px}
+ .mobile-menu{display:block;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:8px;margin-right:10px}
+ .topbar{justify-content:flex-start;flex-wrap:wrap;gap:8px}
+ .topbar>div:nth-child(2){flex:1}
+ .top-actions{width:100%;padding-left:42px;justify-content:space-between}
+ .stats-grid{gap:9px}.stat-card{padding:14px}.stat-card strong{font-size:25px}
+ .welcome-row{align-items:flex-start;gap:12px}.welcome-row .primary-button{padding:9px;font-size:11px}
+ .toolbar{flex-direction:column}.toolbar select{width:100%}
+ .analysis-grid{grid-template-columns:1fr}
+ .panel{padding:13px}
+ .footer{gap:10px;flex-wrap:wrap}
+}
