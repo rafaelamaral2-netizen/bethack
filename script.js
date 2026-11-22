@@ -52,12 +52,16 @@ let liveMode = false;
 
 const SUPABASE_URL = "https://qlmifrawzbwwaguxwrbw.supabase.co";
 const SUPABASE_KEY_STORAGE = "bethack_supabase_anon_key";
+/* Publishable key, safe to use in a browser per Supabase. The user gave
+   this key and asked for it to be embedded so Bethack loads live data
+   without a manual Settings step. Settings can still override it. */
+const DEFAULT_SUPABASE_ANON_KEY = "sb_publishable_NTDz2SAzeSCwcfUdAtDqQg_B7dReq0Z";
 
 function getSupabaseKey() {
     try {
-        return (localStorage.getItem(SUPABASE_KEY_STORAGE) || "").trim();
+        return (localStorage.getItem(SUPABASE_KEY_STORAGE) || "").trim() || DEFAULT_SUPABASE_ANON_KEY;
     } catch (e) {
-        return "";
+        return DEFAULT_SUPABASE_ANON_KEY;
     }
 }
 
