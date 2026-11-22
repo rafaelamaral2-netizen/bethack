@@ -77,14 +77,44 @@
         </div>
       </section>
 
-      <section class="page" id="matches">
-        <div class="section-heading"><div><h2>Partidos</h2><p>Calendario de eventos disponibles</p></div></div>
-        <div class="toolbar">
-          <input id="matchSearch" placeholder="Buscar equipo o liga...">
-          <select id="matchStatus"><option value="all">Todos los estados</option><option value="scheduled">Programados</option><option value="live">En vivo</option></select>
-        </div>
-        <div class="panel"><div id="matchesTable" class="table-wrap"><div class="loading">Cargando...</div></div></div>
-      </section>
+      
+<section class="page" id="matches">
+  <div class="section-heading">
+    <div>
+      <h2>Partidos</h2>
+      <p>Selecciona un deporte y después una liga.</p>
+    </div>
+  </div>
+
+  <div class="sports-section">
+    <div class="sports-grid" id="sportsGrid">
+      <button class="sport-card active" data-sport="all">🌐<span>Todos</span></button>
+      <button class="sport-card" data-sport="soccer">⚽<span>Fútbol</span></button>
+      <button class="sport-card" data-sport="basketball">🏀<span>Basketball</span></button>
+      <button class="sport-card" data-sport="hockey">🏒<span>Hockey</span></button>
+      <button class="sport-card" data-sport="americanfootball">🏈<span>NFL</span></button>
+      <button class="sport-card" data-sport="baseball">⚾<span>MLB</span></button>
+    </div>
+  </div>
+
+  <div id="leagueFilters" class="league-filters"></div>
+
+  <div class="toolbar">
+    <input id="matchSearch" placeholder="Buscar equipo o liga...">
+    <select id="matchStatus">
+      <option value="all">Todos los estados</option>
+      <option value="scheduled">Programados</option>
+      <option value="live">En vivo</option>
+    </select>
+  </div>
+
+  <div class="panel">
+    <div id="matchesTable" class="table-wrap">
+      <div class="loading">Cargando...</div>
+    </div>
+  </div>
+</section>
+
 
       <section class="page" id="scanner">
         <div class="section-heading"><div><h2>Odds Scanner</h2><p>Comparación de cuotas por mercado y casa</p></div></div>
