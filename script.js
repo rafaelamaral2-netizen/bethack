@@ -344,6 +344,8 @@ document.addEventListener("click", event => {
 
     const matchName = button.dataset.analysis;
 
+    if (!matchName) return;
+
     alert(
         `BETHACK MATCH ANALYSIS\n\n${matchName}\n\nAnalysis module coming soon.`
     );
