@@ -99,3 +99,37 @@ tbody tr:hover{background:#172231}
  .panel{padding:13px}
  .footer{gap:10px;flex-wrap:wrap}
 }
+
+.sports-section {
+  margin: 24px 0;
+}
+
+.sports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.sport-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 12px;
+  border: 1px solid #263448;
+  border-radius: 14px;
+  background: #111c2d;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.sport-card:hover,
+.sport-card.active {
+  border-color: #20c879;
+  background: #172d2a;
+}
+
+#sport-content {
+  margin-top: 24px;
+}
