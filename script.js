@@ -16,6 +16,8 @@ const state = {
   valuePicks: [],
   predictions: [],
   loading: false
+  selectedSport: "all",
+selectedLeagueId: "all",
 };
 
 const $ = id => document.getElementById(id);
@@ -223,33 +225,113 @@ function renderDashboard() {
 
 // ---------------- MATCHES ----------------
 
+
+function getSportKey(league) {
+  const key = String(league.provider_key || "").toLowerCase();
+
+  if (key.startsWith("soccer_")) return "soccer";
+  if (key.startsWith("basketball_")) return "basketball";
+  if (key.startsWith("icehockey_")) return "hockey";
+  if (key.startsWith("americanfootball_")) return "americanfootball";
+  if (key.startsWith("baseball_")) return "baseball";
+
+  return "other";
+}
+
+function renderLeagueFilters() {
+  const container = $("leagueFilters");
+  if (!container) return;
+
+  const leagues = state.leagues.filter(league =>
+    league.is_active !== false &&
+    (state.selectedSport === "all" ||
+      getSportKey(league) === state.selectedSport)
+  );
+
+  if (state.selectedLeagueId !== "all" &&
+      !leagues.some(l => l.id === state.selectedLeagueId)) {
+    state.selectedLeagueId = "all";
+  }
+
+  container.innerHTML = `
+    <button class="league-button ${
+      state.selectedLeagueId === "all" ? "active" : ""
+    }" data-league="all">Todas las ligas</button>
+    ${leagues.map(league => `
+      <button class="league-button ${
+        String(state.selectedLeagueId) === String(league.id) ? "active" : ""
+      }" data-league="${safe(league.id)}">
+        ${safe(league.name)}
+      </button>
+    `).join("")}
+  `;
+}
+
+function renderSports() {
+  document.querySelectorAll(".sport-card").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.sport === state.selectedSport
+    );
+  });
+
+  renderLeagueFilters();
+}
+
 function renderMatches() {
   const search = ($("matchSearch")?.value || "").toLowerCase();
   const status = $("matchStatus")?.value || "all";
 
   const filtered = state.events.filter(event => {
+    const league = state.leagues.find(l => l.id === event.league_id);
+
     const text = `${event.home_team} ${event.away_team} ${leagueName(event.league_id)}`.toLowerCase();
+
     const matchesSearch = text.includes(search);
+
+    const matchesSport =
+      state.selectedSport === "all" ||
+      (league && getSportKey(league) === state.selectedSport);
+
+    const matchesLeague =
+      state.selectedLeagueId === "all" ||
+      String(event.league_id) === String(state.selectedLeagueId);
+
     const currentStatus = String(event.status || "").toLowerCase();
 
     const matchesStatus = status === "all" ||
-      (status === "live" && ["live","in_progress","in-play"].includes(currentStatus)) ||
-      (status === "scheduled" && ["scheduled","upcoming","not_started"].includes(currentStatus));
+      (status === "live" &&
+        ["live", "in_progress", "in-play"].includes(currentStatus)) ||
+      (status === "scheduled" &&
+        ["scheduled", "upcoming", "not_started"].includes(currentStatus));
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesSport && matchesLeague && matchesStatus;
   });
 
   $("matchesTable").innerHTML = filtered.length
-    ? `<table><thead><tr><th>EVENTO</th><th>LIGA</th><th>FECHA</th><th>RESULTADO</th><th>ESTADO</th></tr></thead>
-       <tbody>${filtered.map(e => `
-         <tr>
-           <td class="team-cell">${safe(e.home_team)} vs ${safe(e.away_team)}</td>
-           <td>${safe(leagueName(e.league_id))}</td>
-           <td>${formatDate(e.starts_at)}</td>
-           <td>${e.home_score ?? "—"} : ${e.away_score ?? "—"}</td>
-           <td><span class="tag">${safe(e.status || "—")}</span></td>
-         </tr>`).join("")}</tbody></table>`
-    : `<div class="empty">No hay partidos que coincidan con tu búsqueda.</div>`;
+    ? `<table>
+        <thead>
+          <tr>
+            <th>EVENTO</th>
+            <th>LIGA</th>
+            <th>FECHA</th>
+            <th>RESULTADO</th>
+            <th>ESTADO</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.map(e => `
+            <tr>
+              <td class="team-cell">${safe(e.home_team)} vs ${safe(e.away_team)}</td>
+              <td>${safe(leagueName(e.league_id))}</td>
+              <td>${formatDate(e.starts_at)}</td>
+              <td>${e.home_score ?? "—"} : ${e.away_score ?? "—"}</td>
+              <td><span class="tag">${safe(e.status || "—")}</span></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>`
+    : `<div class="empty">No hay partidos disponibles para esta selección.</div>`;
 }
 
 // ---------------- ODDS SCANNER ----------------
@@ -360,6 +442,7 @@ function renderPerformance() {
 function renderAll() {
   renderStats();
   renderDashboard();
+  renderSports();
   renderMatches();
   renderOdds();
   renderValue();
@@ -370,7 +453,26 @@ function renderAll() {
 ["matchSearch","matchStatus"].forEach(id =>
   $(id)?.addEventListener("input", renderMatches)
 );
+$("sportsGrid")?.addEventListener("click", event => {
+  const button = event.target.closest("[data-sport]");
+  if (!button) return;
 
+  state.selectedSport = button.dataset.sport;
+  state.selectedLeagueId = "all";
+
+  renderSports();
+  renderMatches();
+});
+
+$("leagueFilters")?.addEventListener("click", event => {
+  const button = event.target.closest("[data-league]");
+  if (!button) return;
+
+  state.selectedLeagueId = button.dataset.league;
+
+  renderLeagueFilters();
+  renderMatches();
+});
 ["oddsSearch","marketFilter"].forEach(id =>
   $(id)?.addEventListener("input", renderOdds)
 );
