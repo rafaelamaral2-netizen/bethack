@@ -380,3 +380,41 @@ $("analysisSearch")?.addEventListener("input", renderAnalysis);
 // Initial load and automatic database refresh
 loadData();
 setInterval(loadData, 60000);
+
+const sportLeagues = {
+  soccer: [
+    "Premier League", "La Liga", "Bundesliga", "Serie A",
+    "Ligue 1", "Liga MX", "MLS", "Brasileirão",
+    "Champions League", "Europa League",
+    "Conference League", "Libertadores"
+  ],
+  basketball: ["NBA", "WNBA", "EuroLeague"],
+  hockey: ["NHL"],
+  americanfootball: ["NFL"],
+  baseball: ["MLB"]
+};
+
+document.querySelectorAll(".sport-card").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".sport-card").forEach(card =>
+      card.classList.remove("active")
+    );
+
+    button.classList.add("active");
+
+    const sport = button.dataset.sport;
+    const leagues = sportLeagues[sport] || [];
+
+    document.querySelector("#sport-content h2").textContent =
+      button.innerText.trim();
+
+    document.getElementById("league-list").innerHTML =
+      leagues.map(league =>
+        `<button class="league-button" data-league="${league}">
+          ${league}
+        </button>`
+      ).join("");
+
+    document.getElementById("matches-list").innerHTML = "";
+  });
+});
